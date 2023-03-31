@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "@elm-tooling/elm-language-server": "^2.6.0",
+    "elm": "^0.19.1-5",
+    "elm-css": "^0.6.1",
+    "normalize.css": "^8.0.1",
+    "parcel": "^2.8.3",
+    "react": "^18.2.0",
+    "three": "^0.150.1",
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@parcel/transformer-elm": "2.8.3",
+    "@types/three": "^0.150.0",
+    "process": "^0.11.10"
+  },
+  "name": "front-end-showdown",
+  "version": "1.0.0",
+  "description": "Desmos Inspired Clones written in various frameworks to test",
+  "main": "index.js",
+  "repository": "https://github.com/mjrochford/fe-showdown",
+  "author": "Matt Rochford <mattjohnrochford@gmail.com>",
+  "license": "MIT"
+}
