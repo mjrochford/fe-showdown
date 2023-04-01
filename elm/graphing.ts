@@ -8,12 +8,14 @@ export class TwoDGraph extends HTMLElement {
   camera: THREE.Camera;
   scene: THREE.Scene;
   grid_size: number;
+  private xs: number[];
   constructor() {
     super();
     const self = this;
     self.grid_size = 1;
 
     window.addEventListener("resize", (_) => {
+
       self.init();
       self.update();
     });
@@ -22,6 +24,8 @@ export class TwoDGraph extends HTMLElement {
   init() {
     let w = this.parentElement?.clientWidth || TwoDGraph.DEFAULT_WIDTH;
     let h = this.parentElement?.clientHeight || TwoDGraph.DEFAULT_HEIGHT;
+    let sampling_gain = 10;
+    this.xs = Array.from({ length: 2 * w * sampling_gain }, (_, x) => (x - w) / sampling_gain);
     this.canvas = document.createElement("canvas");
     this.canvas.width = w;
     this.canvas.height = h;
@@ -63,17 +67,16 @@ export class TwoDGraph extends HTMLElement {
       }
     }
 
-    const drawExpression = (expr: string, xsamples: number[]) => {
+    const drawExpression = (sampling_fn: (x: number) => [number, number], samples: number[]) => {
       let points: Array<THREE.Vector2> = [];
-      for (let x of xsamples) {
+      for (let s of samples) {
         try {
-          let y = eval(expr);
+          let [x, y] = sampling_fn(s);
           points.push(new THREE.Vector2(x, y));
         } catch {
           break;
         }
       }
-
       const geometry = new THREE.BufferGeometry().setFromPoints(points);
       let material = new THREE.LineBasicMaterial({ color: 0xffaaff });
       let line = new THREE.Line(geometry, material);
@@ -82,9 +85,21 @@ export class TwoDGraph extends HTMLElement {
 
     drawGrid(this.grid_size, 10, 10);
     drawAxes();
-    let sampling_gain = 10;
-    const xs = Array.from({ length: 2 * w * sampling_gain }, (_, x) => (x - w) / sampling_gain)
-    drawExpression(expr, xs);
+
+    let polar_coords_re = /r\s*=\s*(.*)/;
+    let match = polar_coords_re.exec(expr);
+    if (match) {
+      expr = match?.[1];
+      let gain = 3; 
+      let ts = Array.from({ length: 360 * gain }, (_, x) => x * Math.PI / 180);
+      drawExpression((t: number) => {
+        let r = eval(expr);
+        let x = r * Math.cos(t);
+        return [x, r * Math.sin(t)];
+      }, ts);
+    } else {
+      drawExpression((x: number) => [x, eval(expr)], this.xs);
+    }
   }
 
   connectedCallback() {
@@ -104,8 +119,6 @@ export class TwoDGraph extends HTMLElement {
     const expr = this.getAttribute("expression");
     if (!expr) return;
     try {
-      let x = 0;
-      let _ = eval(expr);
       this.draw(expr);
     } catch {
       console.log("bad expr");
