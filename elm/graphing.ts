@@ -3,11 +3,11 @@ import * as THREE from "three"
 export class TwoDGraph extends HTMLElement {
   private static DEFAULT_WIDTH = 640;
   private static DEFAULT_HEIGHT = 480;
-  canvas: HTMLCanvasElement;
-  renderer: THREE.WebGLRenderer;
-  camera: THREE.Camera;
-  scene: THREE.Scene;
-  grid_size: number;
+  private canvas: HTMLCanvasElement;
+  private renderer: THREE.WebGLRenderer;
+  private camera: THREE.Camera;
+  private scene: THREE.Scene;
+  private grid_size: number;
   private xs: number[];
   constructor() {
     super();
@@ -29,9 +29,14 @@ export class TwoDGraph extends HTMLElement {
     this.canvas = document.createElement("canvas");
     this.canvas.width = w;
     this.canvas.height = h;
-    let alpha = 10;
 
-    this.camera = new THREE.OrthographicCamera(-alpha, alpha, alpha, -alpha, 1, 10);
+    let aspect_ratio = w / h;
+    let alpha = 10;
+    if (w > h) {
+      this.camera = new THREE.OrthographicCamera(-alpha, alpha, alpha / aspect_ratio, -alpha / aspect_ratio, 1, 10);
+    } else {
+      this.camera = new THREE.OrthographicCamera(-alpha * aspect_ratio, alpha * aspect_ratio, alpha, -alpha, 1, 10);
+    }
     this.camera.position.z = 1;
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
 
@@ -90,7 +95,7 @@ export class TwoDGraph extends HTMLElement {
     let match = polar_coords_re.exec(expr);
     if (match) {
       expr = match?.[1];
-      let gain = 3; 
+      let gain = 3;
       let ts = Array.from({ length: 360 * gain }, (_, x) => x * Math.PI / 180);
       drawExpression((t: number) => {
         let r = eval(expr);
