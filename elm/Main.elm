@@ -30,7 +30,7 @@ update msg model =
     Change newContent ->
       ( { model | content = newContent}, Cmd.none )
 
-inputHeight = (rem 2)
+inputHeight = (rem 4)
 
 viewInput : Model -> Html Msg
 viewInput model =  
@@ -40,7 +40,7 @@ viewInput model =
     , value model.content
     , onInput Change
     , css 
-        [  padding (rem 1.5)
+        [  paddingLeft (rem 2.0)
         ,  color (hex "ffffff")
         ,  backgroundColor (hex "151515")
         ,  border3 (px 3) solid (hex "111")
@@ -63,7 +63,7 @@ view model =
     [ viewInput model    
     , node "twod-expr-graph"  
       [ attribute "expression" model.content
-      , css [ Css.height (calc (pct 100) minus inputHeight)
+      , css [ Css.height (calc (vh 100) minus inputHeight)
             , display block
             ]
       ]
