@@ -1,12 +1,13 @@
 import { Elm } from "./Main.elm"
-import { TwoDGraph } from "./graphing.ts"
+import { ExpressionGraph } from "./graphing.ts"
 
-customElements.define("twod-expr-graph", TwoDGraph);
+customElements.define("twod-expr-graph", ExpressionGraph);
 
 addEventListener("DOMContentLoaded", () => {
   const app = Elm.Main.init({
     node: document.querySelector("main"),
     // flags: "x * x * Math.sin(x)",
-    flags: "r = 4 * Math.cos(3*t)",
+    // flags: "r = 4 * Math.cos(3*t)",
+    flags: "Math.tan(x)",
   })
 })

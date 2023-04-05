@@ -59,11 +59,11 @@ view model =
       , fontFamilies ["Roboto Mono", "sans-serif"]
       , backgroundColor (hex "151515")
       , margin auto
-      , Css.width (pct 80) ] ]
+      , Css.width (pct 90) ] ]
     [ viewInput model    
     , node "twod-expr-graph"  
       [ attribute "expression" model.content
-      , css [ Css.height (calc (vh 100) minus inputHeight)
+      , css [ Css.height (calc (vh 93) minus inputHeight)
             , display block
             ]
       ]
